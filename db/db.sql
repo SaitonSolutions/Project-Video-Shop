@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `vedio_rental` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `vedio_rental`;
+CREATE DATABASE  IF NOT EXISTS `video_rental` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `video_rental`;
 -- MySQL dump 10.13  Distrib 5.6.17, for Win64 (x86_64)
 --
--- Host: localhost    Database: vedio_rental
+-- Host: localhost    Database: video_rental
 -- ------------------------------------------------------
 -- Server version	5.5.44
 

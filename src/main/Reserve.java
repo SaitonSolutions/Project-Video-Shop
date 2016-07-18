@@ -5,6 +5,16 @@
  */
 package main;
 
+import DB.DB;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author lightway
@@ -14,8 +24,85 @@ public class Reserve extends javax.swing.JFrame {
     /**
      * Creates new form Reserve
      */
+    private DB DBconn = null;
     public Reserve() {
         initComponents();
+        DBconn = new DB();
+        fillCustomers();
+        fillVideo();
+    }
+    
+    private void fillCustomers() {
+        cmbCustomer.removeAllItems();
+        ArrayList dnameList = getCusName();
+        Iterator i = dnameList.iterator();
+
+        while (i.hasNext()) {
+            cmbCustomer.addItem(i.next());
+        }
+    }
+    
+    public ArrayList getCusName() {
+        ArrayList cus = null;
+        Connection dbConn = null;
+
+        try {
+            dbConn = DBconn.conect();
+            Statement stmt = dbConn.createStatement();
+
+            String query = "Select name FROM cus_reg";
+
+            ResultSet rs = stmt.executeQuery(query);
+            cus = new ArrayList();
+
+            while (rs.next()) {
+                String Name = rs.getString(1);
+                cus.add(Name);
+
+            }
+        } catch (SQLException s) {
+            System.out.println(s + "DBError");
+        } finally {
+            DBconn.con_close(dbConn);
+        }
+        return cus;
+    }
+    
+    
+    private void fillVideo() {
+        cmbVideo.removeAllItems();
+        ArrayList dnameList = getvideoName();
+        Iterator i = dnameList.iterator();
+
+        while (i.hasNext()) {
+            cmbVideo.addItem(i.next());
+        }
+    }
+    
+    public ArrayList getvideoName() {
+        ArrayList cus = null;
+        Connection dbConn = null;
+
+        try {
+            dbConn = DBconn.conect();
+            Statement stmt = dbConn.createStatement();
+
+            String query = "Select title FROM video where status=0 ";
+
+            ResultSet rs = stmt.executeQuery(query);
+            cus = new ArrayList();
+
+            while (rs.next()) {
+                String Name = rs.getString(1);
+                cus.add(Name);
+
+            }
+        } catch (SQLException s) {
+            System.out.println(s + "DBError");
+        } finally {
+            DBconn.con_close(dbConn);
+        }
+        return cus;
     }
 
     /**
@@ -30,12 +117,12 @@ public class Reserve extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jComboBox1 = new javax.swing.JComboBox();
-        jComboBox2 = new javax.swing.JComboBox();
+        btnClose = new javax.swing.JButton();
+        btnReserve = new javax.swing.JToggleButton();
+        cmbCustomer = new javax.swing.JComboBox();
+        cmbVideo = new javax.swing.JComboBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel2.setText("Customer ");
 
@@ -44,13 +131,19 @@ public class Reserve extends javax.swing.JFrame {
 
         jLabel3.setText("Video");
 
-        jButton3.setText("Close");
+        btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
-        jToggleButton1.setText("Reserve");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        btnReserve.setText("Reserve");
+        btnReserve.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReserveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -70,11 +163,11 @@ public class Reserve extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 121, Short.MAX_VALUE)
-                                .addComponent(jToggleButton1)
+                                .addComponent(btnReserve)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton3))
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(btnClose))
+                            .addComponent(cmbCustomer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cmbVideo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(14, 14, 14))))
         );
         layout.setVerticalGroup(
@@ -85,20 +178,62 @@ public class Reserve extends javax.swing.JFrame {
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbVideo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jToggleButton1))
+                    .addComponent(btnClose)
+                    .addComponent(btnReserve))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void btnReserveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReserveActionPerformed
+        // TODO add your handling code here:
+        String Name = cmbCustomer.getSelectedItem().toString();
+        String Video = cmbVideo.getSelectedItem().toString();
+
+        int result1 = JOptionPane.showConfirmDialog(null, "Are you sure you "
+                + "want to reserved this video...? ", " Warning...!",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (result1 == JOptionPane.YES_OPTION) {
+            boolean result = false;
+            Connection dbConn = null;
+            try {
+                dbConn = DBconn.conect();
+
+                Statement stmt = dbConn.createStatement();
+                String query = "Update video set cus_name='"+Name+"' ,status=1 where title='"+Video+"' ";
+
+                int val2 = stmt.executeUpdate(query);
+
+                if ((val2 == 1)) {
+                    JOptionPane.showMessageDialog(null, "The video sucessfully reserved");
+                    fillCustomers();
+                    fillVideo();
+                } else {
+                    JOptionPane.showMessageDialog(null, "reserved fail");
+                }
+
+            } catch (Exception sQLException) {
+                System.out.println(sQLException + "update query failed");
+                result = false;
+            } finally {
+                DBconn.con_close(dbConn);
+            }
+        }
+    }//GEN-LAST:event_btnReserveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -141,12 +276,12 @@ public class Reserve extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JButton btnClose;
+    private javax.swing.JToggleButton btnReserve;
+    private javax.swing.JComboBox cmbCustomer;
+    private javax.swing.JComboBox cmbVideo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JToggleButton jToggleButton1;
     // End of variables declaration//GEN-END:variables
 }
