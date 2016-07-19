@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 public class DB {
 
-    private static Connection con;
+    public static Connection con;
 
     public static Connection conect() {
 
