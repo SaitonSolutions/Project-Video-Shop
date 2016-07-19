@@ -32,7 +32,7 @@ CREATE TABLE `cus_reg` (
   `outstanding` double DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,6 +41,7 @@ CREATE TABLE `cus_reg` (
 
 LOCK TABLES `cus_reg` WRITE;
 /*!40000 ALTER TABLE `cus_reg` DISABLE KEYS */;
+INSERT INTO `cus_reg` VALUES (1,'hh','hjhjhj','0312279041',50),(2,'mm','rr','0312245784',390);
 /*!40000 ALTER TABLE `cus_reg` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53,17 +54,15 @@ DROP TABLE IF EXISTS `rent_video`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rent_video` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cus_id` int(11) DEFAULT NULL,
-  `video_id` int(11) DEFAULT NULL,
+  `customer` varchar(100) DEFAULT NULL,
+  `video` varchar(100) DEFAULT NULL,
   `form_date` date DEFAULT NULL,
   `to_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `rent_video_fk1_idx` (`cus_id`),
-  KEY `rent_video_fk2_idx` (`video_id`),
-  CONSTRAINT `rent_video_fk1` FOREIGN KEY (`cus_id`) REFERENCES `cus_reg` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `rent_video_fk2` FOREIGN KEY (`video_id`) REFERENCES `rent_video` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `rent_video_fk1_idx` (`customer`),
+  KEY `rent_video_fk2_idx` (`video`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,6 +71,7 @@ CREATE TABLE `rent_video` (
 
 LOCK TABLES `rent_video` WRITE;
 /*!40000 ALTER TABLE `rent_video` DISABLE KEYS */;
+INSERT INTO `rent_video` VALUES (1,'hh','tt','2016-07-19','2016-07-25'),(2,'hh','tt','2016-07-10','2016-07-10');
 /*!40000 ALTER TABLE `rent_video` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,13 +85,14 @@ DROP TABLE IF EXISTS `video`;
 CREATE TABLE `video` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(100) DEFAULT NULL,
-  `year` date DEFAULT NULL,
+  `year` varchar(45) DEFAULT NULL,
   `price` double DEFAULT NULL,
   `status` int(11) DEFAULT '0',
-  `cus_id` int(11) DEFAULT NULL,
+  `cus_name` varchar(100) DEFAULT NULL,
+  `available` int(11) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,6 +101,7 @@ CREATE TABLE `video` (
 
 LOCK TABLES `video` WRITE;
 /*!40000 ALTER TABLE `video` DISABLE KEYS */;
+INSERT INTO `video` VALUES (2,'tt','2015',600,1,'hh',1);
 /*!40000 ALTER TABLE `video` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -112,4 +114,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-16  3:40:57
+-- Dump completed on 2016-07-19 14:45:04

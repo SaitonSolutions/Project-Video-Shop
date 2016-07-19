@@ -5,6 +5,15 @@
  */
 package main;
 
+import DB.DB;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author lightway
@@ -14,8 +23,67 @@ public class Payment extends javax.swing.JFrame {
     /**
      * Creates new form Payment
      */
+    private DB DBconn = null;
     public Payment() {
         initComponents();
+        DBconn = new DB();
+        fillCustomers();
+    }
+    
+    private void fillCustomers() {
+        cmbCustomer.removeAllItems();
+        ArrayList dnameList = getCusName();
+        Iterator i = dnameList.iterator();
+
+        while (i.hasNext()) {
+            cmbCustomer.addItem(i.next());
+        }
+    }
+    
+    public ArrayList getCusName() {
+        ArrayList cus = null;
+        Connection dbConn = null;
+
+        try {
+            dbConn = DBconn.conect();
+            Statement stmt = dbConn.createStatement();
+
+            String query = "Select name FROM cus_reg";
+
+            ResultSet rs = stmt.executeQuery(query);
+            cus = new ArrayList();
+
+            while (rs.next()) {
+                String Name = rs.getString(1);
+                cus.add(Name);
+
+            }
+        } catch (SQLException s) {
+            System.out.println(s + "DBError");
+        } finally {
+            DBconn.con_close(dbConn);
+        }
+        return cus;
+    }
+    
+    public void outstanding(){
+        Connection dbConn = null;
+        try {
+            dbConn = DBconn.conect();
+            Statement stmt = dbConn.createStatement();
+
+            String query = "Select outstanding FROM cus_reg where name='"+cmbCustomer.getSelectedItem().toString()+"'";
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                txtOuststanding.setText(rs.getString(1));
+            }
+        } catch (SQLException s) {
+            System.out.println(s + "DBError");
+        } finally {
+            DBconn.con_close(dbConn);
+        }
     }
 
     /**
@@ -35,7 +103,7 @@ public class Payment extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtPayment = new javax.swing.JTextField();
         btnClose = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnPlay = new javax.swing.JButton();
         cmbCustomer = new javax.swing.JComboBox();
 
         jLabel3.setText("jLabel3");
@@ -49,6 +117,8 @@ public class Payment extends javax.swing.JFrame {
 
         jLabel4.setText("Outstanding Amount");
 
+        txtOuststanding.setEditable(false);
+
         jLabel5.setText("Payment");
 
         btnClose.setText("Close");
@@ -58,7 +128,18 @@ public class Payment extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Pay");
+        btnPlay.setText("Pay");
+        btnPlay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPlayActionPerformed(evt);
+            }
+        });
+
+        cmbCustomer.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbCustomerItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -80,7 +161,7 @@ public class Payment extends javax.swing.JFrame {
                             .addComponent(cmbCustomer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
+                        .addComponent(btnPlay)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClose)))
                 .addContainerGap())
@@ -105,7 +186,7 @@ public class Payment extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnClose)
-                    .addComponent(jButton3))
+                    .addComponent(btnPlay))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -117,6 +198,48 @@ public class Payment extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void cmbCustomerItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCustomerItemStateChanged
+        // TODO add your handling code here:
+        outstanding();
+    }//GEN-LAST:event_cmbCustomerItemStateChanged
+
+    private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
+        // TODO add your handling code here:
+        String Name = cmbCustomer.getSelectedItem().toString();
+        double outstanding = Double.parseDouble(txtOuststanding.getText());
+        double payment = Double.parseDouble(txtPayment.getText());
+        
+        double value=outstanding-payment;
+
+        int result1 = JOptionPane.showConfirmDialog(null, "Are you sure you "
+                + "want to pay...? ", " Warning...!",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (result1 == JOptionPane.YES_OPTION) {
+            Connection dbConn = null;
+            try {
+                dbConn = DBconn.conect();
+
+                Statement stmt = dbConn.createStatement();
+                String query = "Update cus_reg set outstanding='"+value+"' where name='"+Name+"' ";
+
+                int val2 = stmt.executeUpdate(query);
+
+                if ((val2 == 1)) {
+                    JOptionPane.showMessageDialog(null, "The payment sucessfully made");
+                    outstanding();
+                    txtPayment.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Payment fail");
+                }
+
+            } catch (Exception sQLException) {
+                System.out.println(sQLException + "Payment query failed");
+            } finally {
+                DBconn.con_close(dbConn);
+            }
+        }
+    }//GEN-LAST:event_btnPlayActionPerformed
 
     /**
      * @param args the command line arguments
@@ -160,8 +283,8 @@ public class Payment extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnPlay;
     private javax.swing.JComboBox cmbCustomer;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

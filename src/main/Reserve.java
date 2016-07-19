@@ -87,7 +87,7 @@ public class Reserve extends javax.swing.JFrame {
             dbConn = DBconn.conect();
             Statement stmt = dbConn.createStatement();
 
-            String query = "Select title FROM video where status=0 ";
+            String query = "Select title FROM video ";
 
             ResultSet rs = stmt.executeQuery(query);
             cus = new ArrayList();
@@ -121,13 +121,14 @@ public class Reserve extends javax.swing.JFrame {
         btnReserve = new javax.swing.JToggleButton();
         cmbCustomer = new javax.swing.JComboBox();
         cmbVideo = new javax.swing.JComboBox();
+        btnReceive = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel2.setText("Customer ");
 
         jLabel1.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
-        jLabel1.setText("Reserve Video");
+        jLabel1.setText("Reserve AND Receive Video");
 
         jLabel3.setText("Video");
 
@@ -142,6 +143,13 @@ public class Reserve extends javax.swing.JFrame {
         btnReserve.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReserveActionPerformed(evt);
+            }
+        });
+
+        btnReceive.setText("Receive");
+        btnReceive.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReceiveActionPerformed(evt);
             }
         });
 
@@ -162,7 +170,9 @@ public class Reserve extends javax.swing.JFrame {
                         .addGap(66, 66, 66)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 121, Short.MAX_VALUE)
+                                .addGap(0, 32, Short.MAX_VALUE)
+                                .addComponent(btnReceive)
+                                .addGap(18, 18, 18)
                                 .addComponent(btnReserve)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnClose))
@@ -186,7 +196,8 @@ public class Reserve extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClose)
-                    .addComponent(btnReserve))
+                    .addComponent(btnReserve)
+                    .addComponent(btnReceive))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -235,6 +246,42 @@ public class Reserve extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnReserveActionPerformed
 
+    private void btnReceiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceiveActionPerformed
+        // TODO add your handling code here:
+        String Name = cmbCustomer.getSelectedItem().toString();
+        String Video = cmbVideo.getSelectedItem().toString();
+
+        int result1 = JOptionPane.showConfirmDialog(null, "Are you sure you "
+                + "want to reserved this video...? ", " Warning...!",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (result1 == JOptionPane.YES_OPTION) {
+            boolean result = false;
+            Connection dbConn = null;
+            try {
+                dbConn = DBconn.conect();
+
+                Statement stmt = dbConn.createStatement();
+                String query = "Update video set available=1 ,status=0, cus_name=''  where title='"+Video+"' ";
+
+                int val2 = stmt.executeUpdate(query);
+
+                if ((val2 == 1)) {
+                    JOptionPane.showMessageDialog(null, "The video sucessfully received");
+                    fillCustomers();
+                    fillVideo();
+                } else {
+                    JOptionPane.showMessageDialog(null, "received fail");
+                }
+
+            } catch (Exception sQLException) {
+                System.out.println(sQLException + "update query failed");
+                result = false;
+            } finally {
+                DBconn.con_close(dbConn);
+            }
+        }
+    }//GEN-LAST:event_btnReceiveActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -277,6 +324,7 @@ public class Reserve extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
+    private javax.swing.JToggleButton btnReceive;
     private javax.swing.JToggleButton btnReserve;
     private javax.swing.JComboBox cmbCustomer;
     private javax.swing.JComboBox cmbVideo;
