@@ -2,6 +2,17 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
         <group/>
+=======
+        <group>
+            <file>file:/C:/Users/Miren/Desktop/Project-Video-Shop/src/main/Rent_video.java</file>
+            <file>file:/C:/Users/Miren/Desktop/Project-Video-Shop/src/main/Payment.java</file>
+            <file>file:/C:/Users/Miren/Desktop/Project-Video-Shop/src/main/Reserve.java</file>
+            <file>file:/C:/Users/Miren/Desktop/Project-Video-Shop/src/main/Customer_Registration.java</file>
+            <file>file:/C:/Users/Miren/Desktop/Project-Video-Shop/src/main/Video_Registration.java</file>
+            <file>file:/C:/Users/Miren/Desktop/Project-Video-Shop/src/main/Search_report.java</file>
+        </group>
+>>>>>>> origin/master
     </open-files>
 </project-private>
